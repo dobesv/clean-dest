@@ -10,20 +10,35 @@ export interface CleanDestinationConfig {
 	readonly dryRun: boolean;
 }
 
-type FileMap = { readonly [extension: string]: (destFilePath: string) => string | ReadonlyArray<string> };
+export type FileMap = { readonly [extension: string]: (destFilePath: string) => string | ReadonlyArray<string> };
+export type FileMapImport = (filePath: string) => Promise<FileMap>;
+export type Del = (patterns: ReadonlyArray<string>) => Promise<ReadonlyArray<string>>;
 
 export class CleanDestination {
 
 	private readonly _config: CleanDestinationConfig;
+	private readonly _delUtil: Del;
+	private readonly _importUtil: FileMapImport;
 
-	public constructor(config: CleanDestinationConfig) {
+	/**
+	 * @param config Configuration
+	 * @param delUtil [Del](https://www.npmjs.com/package/del-cli) library
+	 * @param importUtil Import function
+	 */
+	public constructor(config: CleanDestinationConfig, delUtil: Del = del, importUtil: FileMapImport = (filePath: string): Promise<FileMap> => import(filePath)) {
+
 		this._config = config;
+		this._delUtil = delUtil;
+		this._importUtil = importUtil;
 	}
 
+	/**
+	 * Execute the clean destination function
+	 */
 	public async execute(): Promise<ReadonlyArray<string>> {
 
 		const { srcRootPath, destRootPath, fileMapPath } = this._config;
-		const fileMap = fileMapPath ? await import(fileMapPath) : null;
+		const fileMap = fileMapPath ? await this._importUtil(fileMapPath) : null;
 		const srcFilePaths = await globby(srcRootPath);
 		const destFilePaths = [];
 		for (const srcFilePath of srcFilePaths) {
@@ -34,7 +49,10 @@ export class CleanDestination {
 				destFilePaths.push(...destFilePath);
 			}
 		}
-		return await del(destFilePaths);
+		if (this._config.dryRun) {
+			return [];
+		}
+		return await this._delUtil(destFilePaths);
 	}
 
 	private mapDestFile(srcFilePath: string, srcRootPath: string, destRootPath: string, fileMap: FileMap | null): string | ReadonlyArray<string> | null {
