@@ -5,6 +5,7 @@ import del from 'del';
 export interface CleanDestinationConfig {
 	readonly srcRootPath: string;
 	readonly destRootPath: string;
+	readonly basePattern: string | null;
 	readonly fileMapPath: string | null;
 	readonly verbose: boolean;
 	readonly dryRun: boolean;
@@ -39,20 +40,21 @@ export class CleanDestination {
 	public async execute(): Promise<ReadonlyArray<string>> {
 
 		this.log('Executing, using config', this._config);
-		const { srcRootPath, destRootPath, fileMapPath } = this._config;
+		const { srcRootPath, destRootPath, fileMapPath, basePattern } = this._config;
 		const fileMap = fileMapPath ? await this._importUtil(fileMapPath) : null;
 		if (fileMap) {
 			this.log('Imported file map', fileMapPath);
 		}
 		const srcFilePaths = await globby(srcRootPath);
 		this.log('Matched source files', srcFilePaths);
-		const destFilePaths = [];
+		const defaultBasePattern =  path.join(srcRootPath, '**', '*');
+		const destFilePaths = [basePattern ||defaultBasePattern];
 		for (const srcFilePath of srcFilePaths) {
 			const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
 			if (typeof destFilePath === 'string') {
-				destFilePaths.push(destFilePath);
+				destFilePaths.push('!' + destFilePath);
 			} else if (destFilePath !== null) {
-				destFilePaths.push(...destFilePath);
+				destFilePaths.push(...destFilePath.map(d => '!' + d));
 			}
 		}
 		if (this._config.dryRun) {
@@ -60,7 +62,9 @@ export class CleanDestination {
 			return [];
 		}
 		this.log('Matched destination files', destFilePaths);
-		return await this._delUtil(destFilePaths);
+		const deleted = await this._delUtil(destFilePaths);
+		this.log('Deleted files', deleted);
+		return deleted;
 	}
 
 	private mapDestFile(srcFilePath: string, srcRootPath: string, destRootPath: string, fileMap: FileMap | null): string | ReadonlyArray<string> | null {

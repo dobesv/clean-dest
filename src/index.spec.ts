@@ -11,6 +11,7 @@ describe(CleanDestination.name, () => {
 		const defaultConfig: CleanDestinationConfig = {
 			srcRootPath: '',
 			destRootPath: '',
+			basePattern: '',
 			fileMapPath: null,
 			verbose: true,
 			dryRun: true

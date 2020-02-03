@@ -8,6 +8,7 @@ mocha_1.describe(index_1.CleanDestination.name, () => {
         const defaultConfig = {
             srcRootPath: '',
             destRootPath: '',
+            basePattern: '',
             fileMapPath: null,
             verbose: true,
             dryRun: true

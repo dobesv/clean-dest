@@ -21,21 +21,22 @@ class CleanDestination {
      */
     async execute() {
         this.log('Executing, using config', this._config);
-        const { srcRootPath, destRootPath, fileMapPath } = this._config;
+        const { srcRootPath, destRootPath, fileMapPath, basePattern } = this._config;
         const fileMap = fileMapPath ? await this._importUtil(fileMapPath) : null;
         if (fileMap) {
             this.log('Imported file map', fileMapPath);
         }
         const srcFilePaths = await globby_1.default(srcRootPath);
         this.log('Matched source files', srcFilePaths);
-        const destFilePaths = [];
+        const defaultBasePattern = path_1.default.join(srcRootPath, '**', '*');
+        const destFilePaths = [basePattern || defaultBasePattern];
         for (const srcFilePath of srcFilePaths) {
             const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
             if (typeof destFilePath === 'string') {
-                destFilePaths.push(destFilePath);
+                destFilePaths.push('!' + destFilePath);
             }
             else if (destFilePath !== null) {
-                destFilePaths.push(...destFilePath);
+                destFilePaths.push(...destFilePath.map(d => '!' + d));
             }
         }
         if (this._config.dryRun) {
@@ -43,7 +44,9 @@ class CleanDestination {
             return [];
         }
         this.log('Matched destination files', destFilePaths);
-        return await this._delUtil(destFilePaths);
+        const deleted = await this._delUtil(destFilePaths);
+        this.log('Deleted files', deleted);
+        return deleted;
     }
     mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap) {
         const destFilePath = this.mapSrcToDestPath(srcFilePath, srcRootPath, destRootPath);

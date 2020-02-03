@@ -20,6 +20,12 @@ const argv = yargs_1.default
         alias: 'd',
         type: 'string',
     },
+    'base-pattern': {
+        default: null,
+        describe: 'An optional starting pattern to delete, default is "src-root"/**/*',
+        demand: false,
+        type: 'string',
+    },
     'file-map': {
         default: null,
         describe: 'Path to a js file whose only export is an extension to clean, or a [ext]: fn object to map source path to destination path(s)',
@@ -47,6 +53,7 @@ async function main() {
     const preprocessor = new index_1.CleanDestination({
         srcRootPath: argv['src-root'],
         destRootPath: argv['dest-root'],
+        basePattern: argv['base-pattern'],
         fileMapPath: argv['file-map'],
         dryRun: argv['dry-run'],
         verbose: argv['verbose'],
