@@ -1,0 +1,13 @@
+.github/
+.vscode/
+coverage/
+
+.editorconfig
+.eslintrc.js
+.gitignore
+.tsbuildinfo
+codealike.json
+tsconfig.json
+tslint.json
+
+*.md

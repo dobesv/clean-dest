@@ -31,6 +31,12 @@ const argv = yargs
 			demand: false,
 			type: 'string',
 		},
+		'permanent': {
+			default: false,
+			demand: false,
+			describe: 'Optional permanent delete using [del](https://github.com/sindresorhus/del), otherwise uses [trash](https://github.com/sindresorhus/trash).',
+			type: 'boolean',
+		},
 		'dry-run': {
 			default: false,
 			demand: false,
@@ -56,6 +62,7 @@ async function main(): Promise<void> {
 		destRootPath: argv['dest-root'],
 		basePattern: argv['base-pattern'],
 		fileMapPath: argv['file-map'],
+		permanent: argv['permanent'],
 		dryRun: argv['dry-run'],
 		verbose: argv['verbose'],
 	});
