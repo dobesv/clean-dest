@@ -10,25 +10,25 @@ const argv = yargs_1.default
     .options({
     'src-root': {
         demand: true,
-        describe: '[Glob](https://www.npmjs.com/package/globby) pattern(s) for source files',
+        describe: '[Glob](https://www.npmjs.com/package/globby) pattern(s) for source files.',
         alias: 's',
         type: 'string',
     },
     'dest-root': {
         demand: true,
-        describe: 'Destination root directory',
+        describe: 'Destination root directory.',
         alias: 'd',
         type: 'string',
     },
     'base-pattern': {
         default: null,
-        describe: 'An optional starting pattern to delete, default is "dest-root"/**/*',
+        describe: 'An optional starting pattern to delete, default is "dest-root"/**/*.',
         demand: false,
         type: 'string',
     },
     'file-map': {
         default: null,
-        describe: 'Path to a js file whose only export is an extension to clean, or a [ext]: fn object to map source path to destination path(s)',
+        describe: 'Path to a js file whose only export is an extension to clean, or a [ext]: fn object to map source path to destination path(s).',
         demand: false,
         type: 'string',
     },

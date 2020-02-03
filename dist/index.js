@@ -55,7 +55,7 @@ class CleanDestination {
         const deleted = await this._delUtil(destFilePaths, {
             dryRun: this._config.dryRun
         });
-        if (deleted) {
+        if (deleted) { // TODO: Deletd for trash?
             this.log('Deleted files', deleted);
         }
     }
