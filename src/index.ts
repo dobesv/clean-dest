@@ -13,6 +13,7 @@ export interface CleanDestinationConfig {
 export type FileMap = { readonly [extension: string]: (destFilePath: string) => string | ReadonlyArray<string> };
 export type FileMapImport = (filePath: string) => Promise<FileMap>;
 export type Del = (patterns: ReadonlyArray<string>) => Promise<ReadonlyArray<string>>;
+const defaultFileMapImport: FileMapImport = (filePath) => import(path.resolve(filePath));
 
 export class CleanDestination {
 
@@ -25,7 +26,7 @@ export class CleanDestination {
 	 * @param delUtil [Del](https://www.npmjs.com/package/del-cli) library
 	 * @param importUtil Import function
 	 */
-	public constructor(config: CleanDestinationConfig, delUtil: Del = del, importUtil: FileMapImport = (filePath: string): Promise<FileMap> => import(filePath)) {
+	public constructor(config: CleanDestinationConfig, delUtil: Del = del, importUtil: FileMapImport = defaultFileMapImport) {
 
 		this._config = config;
 		this._delUtil = delUtil;
@@ -37,9 +38,14 @@ export class CleanDestination {
 	 */
 	public async execute(): Promise<ReadonlyArray<string>> {
 
+		this.log('Executing, using config', this._config);
 		const { srcRootPath, destRootPath, fileMapPath } = this._config;
 		const fileMap = fileMapPath ? await this._importUtil(fileMapPath) : null;
+		if (fileMap) {
+			this.log('Imported file map', fileMapPath);
+		}
 		const srcFilePaths = await globby(srcRootPath);
+		this.log('Matched source files', srcFilePaths);
 		const destFilePaths = [];
 		for (const srcFilePath of srcFilePaths) {
 			const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
@@ -50,8 +56,10 @@ export class CleanDestination {
 			}
 		}
 		if (this._config.dryRun) {
+			this.log('Matched destination files, dry run', destFilePaths);
 			return [];
 		}
+		this.log('Matched destination files', destFilePaths);
 		return await this._delUtil(destFilePaths);
 	}
 
@@ -81,5 +89,11 @@ export class CleanDestination {
 		const fullAppDestPath = path.resolve(destRootPath);
 		const relativeSrcPath = path.relative(fullAppSrcPath, srcFilePath);
 		return path.resolve(fullAppDestPath, relativeSrcPath);
+	}
+
+	private log(message: string, ...optionalArgs: ReadonlyArray<any>): void {
+		if (this._config.verbose) {
+			console.log(message, ...optionalArgs);
+		}
 	}
 }

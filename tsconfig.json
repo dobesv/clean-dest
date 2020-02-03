@@ -40,6 +40,10 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
+    /* Source Map Options */
+    "inlineSourceMap": false,
+    "inlineSources": false,
+
     /* Experimental Options */
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
