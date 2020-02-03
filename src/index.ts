@@ -47,7 +47,7 @@ export class CleanDestination {
 		}
 		const srcFilePaths = await globby(srcRootPath);
 		this.log('Matched source files', srcFilePaths);
-		const defaultBasePattern =  path.join(srcRootPath, '**', '*');
+		const defaultBasePattern =  path.join(destRootPath, '**', '*');
 		const destFilePaths = [basePattern ||defaultBasePattern];
 		for (const srcFilePath of srcFilePaths) {
 			const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);

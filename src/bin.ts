@@ -21,7 +21,7 @@ const argv = yargs
 		},
 		'base-pattern': {
 			default: null,
-			describe: 'An optional starting pattern to delete, default is "src-root"/**/*',
+			describe: 'An optional starting pattern to delete, default is "dest-root"/**/*',
 			demand: false,
 			type: 'string',
 		},
