@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
 const mocha_1 = require("mocha");
 const assert_1 = require("assert");
-const path_1 = tslib_1.__importDefault(require("path"));
 const index_1 = require("./index");
 mocha_1.describe(index_1.CleanDestination.name, () => {
+    const defaultDelUtil = () => Promise.resolve([]);
+    const defaultImportUtil = () => Promise.resolve({});
     function createSUT(config, delUtil, importUtil) {
         const defaultConfig = {
             srcRootPath: './src',
@@ -16,9 +16,6 @@ mocha_1.describe(index_1.CleanDestination.name, () => {
             verbose: true,
             dryRun: true
         };
-        const fileMap = {};
-        const defaultDelUtil = () => Promise.resolve([]);
-        const defaultImportUtil = () => Promise.resolve(fileMap);
         return new index_1.CleanDestination(Object.assign(defaultConfig, config), delUtil || defaultDelUtil, importUtil || defaultImportUtil);
     }
     mocha_1.describe('constructor', () => {
@@ -30,7 +27,14 @@ mocha_1.describe(index_1.CleanDestination.name, () => {
     mocha_1.describe(index_1.CleanDestination.prototype.execute.name, () => {
         mocha_1.it.only('executes', async () => {
             // const srcRootPath = '/some/path/';
-            const sut = createSUT(undefined, undefined, (fileMapPath) => Promise.resolve().then(() => tslib_1.__importStar(require(path_1.default.resolve(fileMapPath)))));
+            // const tsFileMap: FileMap = {
+            // 	'.ts': (destFilePath) => [
+            // 		destFilePath.replace(/.js$/, '.d.ts'),
+            // 		destFilePath.replace(/.js$/, '.d.ts'),
+            // 		destFilePath.replace(/.js$/, '.d.ts')
+            // 	]
+            // };
+            const sut = createSUT();
             const actual = await sut.execute();
             const expected = [];
             assert_1.strict.deepStrictEqual(actual, expected);

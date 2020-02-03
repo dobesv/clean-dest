@@ -1,13 +1,14 @@
 import { describe, it } from 'mocha';
 import { strict as assert } from 'assert';
-import del from 'del';
-import path from 'path';
 
 import { CleanDestination, CleanDestinationConfig, FileMapImport, Delete, FileMap } from './index';
 
 describe(CleanDestination.name, () => {
 
-	function createSUT(config?: Partial<CleanDestinationConfig>, delUtil?: typeof del, importUtil?: FileMapImport): CleanDestination {
+	const defaultDelUtil: Delete = () => Promise.resolve([]);
+	const defaultImportUtil: FileMapImport = () => Promise.resolve({});
+
+	function createSUT(config?: Partial<CleanDestinationConfig>, delUtil?: Delete, importUtil?: FileMapImport): CleanDestination {
 
 		const defaultConfig: CleanDestinationConfig = {
 			srcRootPath: './src',
@@ -18,10 +19,6 @@ describe(CleanDestination.name, () => {
 			verbose: true,
 			dryRun: true
 		};
-		const fileMap: FileMap = {
-		};
-		const defaultDelUtil: Delete = () => Promise.resolve([]);
-		const defaultImportUtil: FileMapImport = () => Promise.resolve(fileMap);
 		return new CleanDestination(Object.assign(defaultConfig, config), delUtil || defaultDelUtil, importUtil || defaultImportUtil);
 	}
 
@@ -39,7 +36,14 @@ describe(CleanDestination.name, () => {
 		it.only('executes', async () => {
 
 			// const srcRootPath = '/some/path/';
-			const sut = createSUT(undefined, undefined, (fileMapPath) => import(path.resolve(fileMapPath)));
+			// const tsFileMap: FileMap = {
+			// 	'.ts': (destFilePath) => [
+			// 		destFilePath.replace(/.js$/, '.d.ts'),
+			// 		destFilePath.replace(/.js$/, '.d.ts'),
+			// 		destFilePath.replace(/.js$/, '.d.ts')
+			// 	]
+			// };
+			const sut = createSUT();
 			const actual = await sut.execute();
 			const expected: Array<string> = [];
 			assert.deepStrictEqual(actual, expected);
