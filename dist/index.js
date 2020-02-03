@@ -12,15 +12,19 @@ class CleanDestination {
      * @param importUtil Import function
      */
     constructor(config, delUtil, importUtil) {
-        this._config = config;
-        this._delUtil = delUtil || config.permanent
-            ? (patterns, options) => del_1.default(patterns, options)
-            : (patterns) => trash_1.default(patterns);
+        const defaultDeleteUtility = (patterns, options) => {
+            if (config.permanent) {
+                return del_1.default(patterns, options);
+            }
+            return trash_1.default(patterns);
+        };
         const defaultFileMapImport = (fileMapPath) => {
             const resolvedPath = path_1.default.resolve(fileMapPath);
             this.log('Imported file map', resolvedPath);
             return Promise.resolve().then(() => tslib_1.__importStar(require(resolvedPath)));
         };
+        this._config = config;
+        this._delUtil = delUtil || defaultDeleteUtility;
         this._importUtil = importUtil || defaultFileMapImport;
     }
     /**
@@ -32,11 +36,11 @@ class CleanDestination {
         const fileMap = fileMapPath
             ? await this._importUtil(fileMapPath)
             : null;
-        const srcPath = path_1.default.resolve(srcRootPath) + '/**/*'; // path.join(srcRootPath, '**', '*');
+        const srcPath = path_1.default.posix.join(srcRootPath, '**', '*');
         this.log('Matching source', srcPath);
         const srcFilePaths = await globby_1.default(srcRootPath);
         this.log('Matched source files', srcFilePaths);
-        const defaultBasePattern = path_1.default.resolve(destRootPath) + '/**/*'; // path.join(destRootPath, '**', '*');
+        const defaultBasePattern = path_1.default.posix.join(destRootPath, '**', '*');
         const destFilePaths = [basePattern || defaultBasePattern];
         for (const srcFilePath of srcFilePaths) {
             const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
@@ -47,8 +51,10 @@ class CleanDestination {
                 destFilePaths.push(...destFilePath.map(d => '!' + d));
             }
         }
-        this.log('Matched destination files', destFilePaths);
-        const deleted = await this._delUtil(destFilePaths, { dryRun: this._config.dryRun });
+        this.log('Matching destination files', destFilePaths);
+        const deleted = await this._delUtil(destFilePaths, {
+            dryRun: this._config.dryRun
+        });
         if (deleted) {
             this.log('Deleted files', deleted);
         }
@@ -73,9 +79,8 @@ class CleanDestination {
     }
     mapSrcToDestPath(srcFilePath, srcRootPath, destRootPath) {
         const fullAppSrcPath = path_1.default.resolve(srcRootPath);
-        const fullAppDestPath = path_1.default.resolve(destRootPath);
         const relativeSrcPath = path_1.default.relative(fullAppSrcPath, srcFilePath);
-        return path_1.default.resolve(fullAppDestPath, relativeSrcPath);
+        return path_1.default.join(destRootPath, relativeSrcPath).replace(/\\/g, '/');
     }
     log(message, ...optionalArgs) {
         if (this._config.verbose) {

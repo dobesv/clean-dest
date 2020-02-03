@@ -10,14 +10,13 @@ describe(CleanDestination.name, () => {
 	function createSUT(config?: Partial<CleanDestinationConfig>, delUtil?: typeof del, importUtil?: FileMapImport): CleanDestination {
 
 		const defaultConfig: CleanDestinationConfig = {
-			//srcRootPath: 'C:\\Users\\seans\\Documents\\GitHub\\SeanSobey\\chartjs-node-canvas\\src',
-			srcRootPath: 'C:/Users/seans/Documents/GitHub/SeanSobey/chartjs-node-canvas/src',
-			destRootPath: 'C:\\Users\\seans\\Documents\\GitHub\\SeanSobey\\chartjs-node-canvas\\dest',
-			basePattern:  null,
-			fileMapPath: 'C:\\Users\\seans\\Documents\\GitHub\\SeanSobey\\chartjs-node-canvas\\scripts\\clean-dest',
+			srcRootPath: './src',
+			destRootPath: './dest',
+			basePattern: null,
+			fileMapPath: null,
 			permanent: true,
 			verbose: true,
-			dryRun: false
+			dryRun: true
 		};
 		const fileMap: FileMap = {
 		};
@@ -43,7 +42,7 @@ describe(CleanDestination.name, () => {
 			const sut = createSUT(undefined, undefined, (fileMapPath) => import(path.resolve(fileMapPath)));
 			const actual = await sut.execute();
 			const expected: Array<string> = [];
-			//assert.deepStrictEqual(actual, expected);
+			assert.deepStrictEqual(actual, expected);
 		});
 	});
 });

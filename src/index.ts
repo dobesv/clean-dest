@@ -30,15 +30,19 @@ export class CleanDestination {
 	 */
 	public constructor(config: CleanDestinationConfig, delUtil?: Delete, importUtil?: FileMapImport) {
 
-		this._config = config;
-		this._delUtil = delUtil || config.permanent
-			? (patterns, options) => del(patterns, options)
-			: (patterns) => trash(patterns);
+		const defaultDeleteUtility: Delete = (patterns, options) => {
+			if (config.permanent) {
+				return del(patterns, options);
+			}
+			return trash(patterns);
+		};
 		const defaultFileMapImport: FileMapImport = (fileMapPath) => {
 			const resolvedPath = path.resolve(fileMapPath);
 			this.log('Imported file map', resolvedPath);
 			return import(resolvedPath);
 		};
+		this._config = config;
+		this._delUtil = delUtil || defaultDeleteUtility;
 		this._importUtil = importUtil || defaultFileMapImport;
 	}
 
@@ -52,11 +56,11 @@ export class CleanDestination {
 		const fileMap = fileMapPath
 			? await this._importUtil(fileMapPath)
 			: null;
-		const srcPath = path.resolve(srcRootPath) + '/**/*';// path.join(srcRootPath, '**', '*');
+		const srcPath = path.posix.join(srcRootPath, '**', '*');
 		this.log('Matching source', srcPath);
 		const srcFilePaths = await globby(srcRootPath);
 		this.log('Matched source files', srcFilePaths);
-		const defaultBasePattern = path.resolve(destRootPath) + '/**/*';// path.join(destRootPath, '**', '*');
+		const defaultBasePattern = path.posix.join(destRootPath, '**', '*');
 		const destFilePaths = [basePattern ||defaultBasePattern];
 		for (const srcFilePath of srcFilePaths) {
 			const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
@@ -66,8 +70,10 @@ export class CleanDestination {
 				destFilePaths.push(...destFilePath.map(d => '!' + d));
 			}
 		}
-		this.log('Matched destination files', destFilePaths);
-		const deleted = await this._delUtil(destFilePaths, { dryRun: this._config.dryRun });
+		this.log('Matching destination files', destFilePaths);
+		const deleted = await this._delUtil(destFilePaths, {
+			dryRun: this._config.dryRun
+		});
 		if (deleted) {
 			this.log('Deleted files', deleted);
 		}
@@ -96,9 +102,8 @@ export class CleanDestination {
 	private mapSrcToDestPath(srcFilePath: string, srcRootPath: string, destRootPath: string): string {
 
 		const fullAppSrcPath = path.resolve(srcRootPath);
-		const fullAppDestPath = path.resolve(destRootPath);
 		const relativeSrcPath = path.relative(fullAppSrcPath, srcFilePath);
-		return path.resolve(fullAppDestPath, relativeSrcPath);
+		return path.join(destRootPath, relativeSrcPath).replace(/\\/g, '/');
 	}
 
 	private log(message: string, ...optionalArgs: ReadonlyArray<any>): void {
