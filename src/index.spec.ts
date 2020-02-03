@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
 import { strict as assert } from 'assert';
 
-import { CleanDestination, CleanDestinationConfig, FileMapImport, Delete, FileMap } from './index';
+import { CleanDestination, CleanDestinationConfig, FileMapImport, Delete /*, FileMap */ } from './index';
 
 describe(CleanDestination.name, () => {
 
