@@ -4,13 +4,10 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: windows-latest
-
     strategy:
       matrix:
         node-version: [13.6.0]
-
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
@@ -20,9 +17,11 @@ jobs:
     - name: npm install
       run: npm ci
     - name: npm build
-      run: npm run build
+      run: npm run-script build
+    - name: npm lint
+      run: npm run-script lint
     - name: npm test
-      run: npm run test
+      run: npm run-script test
     - name: npm publish
       shell: bash
       run: ./.github/scripts/publish.sh

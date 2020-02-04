@@ -45,7 +45,7 @@ module.exports = exports = {
 ```
 
 ```
-clean-dest -s ./src -d ./dist --file-map ./scripts/clean-dest --permanent --verbose
+clean-dest -s ./src -d ./dist --file-map ./scripts/clean-dest
 ```
 
 ## CLI
@@ -81,3 +81,11 @@ Optional output logging.
 ## API
 
 See the [API docs](https://github.com/SeanSobey/clean-dest/blob/master/API.md).
+
+## Watch Mode
+
+Use [nodemon](https://nodemon.io/):
+
+```
+nodemon --watch ./src -e ts --exec clean-dest -s ./src -d ./dist
+```

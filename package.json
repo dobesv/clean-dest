@@ -8,10 +8,10 @@
   "scripts": {
     "build": "tsc --build",
     "lint": "eslint src/**/*.ts",
-    "test": "mocha dist/**/*.spec.js",
-    "test-cover": "c8 --all mocha dist/**/*.spec.js",
+    "test": "c8 --all mocha dist/**/*.spec.js",
     "watch-build": "tsc --watch",
-    "watch-test": "mocha --watch dist/**/*.spec.js",
+    "watch-lint": "nodemon --watch ./src -e ts --exec npm run-script lint",
+    "watch-test": "nodemon --watch ./dist -e js --exec npm run-script test",
     "release": "release-it",
     "docs": "jsdoc2md dist/index.js > API.md"
   },
