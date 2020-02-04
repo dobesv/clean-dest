@@ -14,6 +14,8 @@ $ npm install clean-dest
 
 ## Usage
 
+### Folder structure
+
 ```
 │
 └───scripts
@@ -32,6 +34,8 @@ $ npm install clean-dest
 │   │   file2.d.ts
 ```
 
+### Custom FileMap function
+
 ./scripts/clean-dest.js
 ```js
 module.exports = exports = {
@@ -43,6 +47,8 @@ module.exports = exports = {
     ]
 };
 ```
+
+### CLI command
 
 ```
 clean-dest -s ./src -d ./dist --file-map ./scripts/clean-dest
