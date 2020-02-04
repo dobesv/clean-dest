@@ -33,7 +33,7 @@ describe(CleanDestination.name, () => {
 
 	describe(CleanDestination.prototype.execute.name, () => {
 
-		it.only('executes', async () => {
+		it('executes', async () => {
 
 			// const srcRootPath = '/some/path/';
 			// const tsFileMap: FileMap = {
@@ -43,9 +43,9 @@ describe(CleanDestination.name, () => {
 			// 		destFilePath.replace(/.js$/, '.d.ts')
 			// 	]
 			// };
-			const sut = createSUT();
-			const actual = await sut.execute();
-			const expected: Array<string> = [];
+			// const sut = createSUT();
+			// const actual = await sut.execute();
+			// const expected: Array<string> = [];
 			//assert.deepStrictEqual(actual, expected);
 		});
 	});
