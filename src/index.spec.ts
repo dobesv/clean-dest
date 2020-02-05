@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
 import { strict as assert } from 'assert';
 
-import { CleanDestination, CleanDestinationConfig, FileMapImport, Delete /*, FileMap */ } from './index';
+import { CleanDestination, CleanDestinationConfig, FileMapImport, Delete, FileMap } from './index';
 
 describe(CleanDestination.name, () => {
 
@@ -33,20 +33,31 @@ describe(CleanDestination.name, () => {
 
 	describe(CleanDestination.prototype.execute.name, () => {
 
-		it('executes', async () => {
+		describe('given typescript file map', () => {
 
-			// const srcRootPath = '/some/path/';
-			// const tsFileMap: FileMap = {
-			// 	'.ts': (destFilePath) => [
-			// 		destFilePath.replace(/.js$/, '.d.ts'),
-			// 		destFilePath.replace(/.js$/, '.d.ts'),
-			// 		destFilePath.replace(/.js$/, '.d.ts')
-			// 	]
-			// };
-			// const sut = createSUT();
-			// const actual = await sut.execute();
-			// const expected: Array<string> = [];
-			//assert.deepStrictEqual(actual, expected);
+			const tsFileMap: FileMap = {
+				'.ts': (destFilePath) => [
+					destFilePath.replace(/.js$/, '.d.ts'),
+					destFilePath.replace(/.js$/, '.d.ts'),
+					destFilePath.replace(/.js$/, '.d.ts')
+				]
+			};
+
+			it('executes', async () => {
+
+				const srcRootPath = './test/data/**/*';
+				const sut = createSUT({ srcRootPath }, (patterns) => Promise.resolve(patterns), () => Promise.resolve(tsFileMap));
+				const actual = await sut.execute();
+				const expected: Array<string> = [
+					'dest/**/*',
+					'!../file1.ts',
+					'!../file2.ts',
+					'!../folder1',
+					'!../folder2',
+					'!../folder1/file3.ts'
+				];
+				assert.deepStrictEqual(actual, expected);
+			});
 		});
 	});
 });

@@ -38,7 +38,10 @@ class CleanDestination {
             : null;
         const srcPath = path_1.default.posix.join(srcRootPath, '**', '*');
         this.log('Matching source', srcPath);
-        const srcFilePaths = await globby_1.default(srcRootPath);
+        const srcFilePaths = await globby_1.default(srcRootPath, {
+            expandDirectories: true,
+            onlyFiles: false
+        });
         this.log('Matched source files', srcFilePaths);
         const defaultBasePattern = path_1.default.posix.join(destRootPath, '**', '*');
         const destFilePaths = [basePattern || defaultBasePattern];
@@ -57,6 +60,7 @@ class CleanDestination {
         });
         if (deleted) { // TODO: Deletd for trash?
             this.log('Deleted files', deleted);
+            return deleted;
         }
     }
     mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap) {

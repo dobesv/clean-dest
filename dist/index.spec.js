@@ -25,19 +25,28 @@ mocha_1.describe(index_1.CleanDestination.name, () => {
         });
     });
     mocha_1.describe(index_1.CleanDestination.prototype.execute.name, () => {
-        mocha_1.it('executes', async () => {
-            // const srcRootPath = '/some/path/';
-            // const tsFileMap: FileMap = {
-            // 	'.ts': (destFilePath) => [
-            // 		destFilePath.replace(/.js$/, '.d.ts'),
-            // 		destFilePath.replace(/.js$/, '.d.ts'),
-            // 		destFilePath.replace(/.js$/, '.d.ts')
-            // 	]
-            // };
-            // const sut = createSUT();
-            // const actual = await sut.execute();
-            // const expected: Array<string> = [];
-            //assert.deepStrictEqual(actual, expected);
+        mocha_1.describe('given typescript file map', () => {
+            const tsFileMap = {
+                '.ts': (destFilePath) => [
+                    destFilePath.replace(/.js$/, '.d.ts'),
+                    destFilePath.replace(/.js$/, '.d.ts'),
+                    destFilePath.replace(/.js$/, '.d.ts')
+                ]
+            };
+            mocha_1.it('executes', async () => {
+                const srcRootPath = './test/data/**/*';
+                const sut = createSUT({ srcRootPath }, (patterns) => Promise.resolve(patterns), () => Promise.resolve(tsFileMap));
+                const actual = await sut.execute();
+                const expected = [
+                    'dest/**/*',
+                    '!../file1.ts',
+                    '!../file2.ts',
+                    '!../folder1',
+                    '!../folder2',
+                    '!../folder1/file3.ts'
+                ];
+                assert_1.strict.deepStrictEqual(actual, expected);
+            });
         });
     });
 });

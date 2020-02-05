@@ -49,7 +49,7 @@ export class CleanDestination {
 	/**
 	 * Execute the clean destination function
 	 */
-	public async execute(): Promise<void> {
+	public async execute(): Promise<void | ReadonlyArray<string>> {
 
 		this.log('Executing, using config', this._config);
 		const { srcRootPath, destRootPath, fileMapPath, basePattern } = this._config;
@@ -58,7 +58,10 @@ export class CleanDestination {
 			: null;
 		const srcPath = path.posix.join(srcRootPath, '**', '*');
 		this.log('Matching source', srcPath);
-		const srcFilePaths = await globby(srcRootPath);
+		const srcFilePaths = await globby(srcRootPath, {
+			expandDirectories: true,
+			onlyFiles: false
+		});
 		this.log('Matched source files', srcFilePaths);
 		const defaultBasePattern = path.posix.join(destRootPath, '**', '*');
 		const destFilePaths = [basePattern ||defaultBasePattern];
@@ -76,6 +79,7 @@ export class CleanDestination {
 		});
 		if (deleted) { // TODO: Deletd for trash?
 			this.log('Deleted files', deleted);
+			return deleted;
 		}
 	}
 
