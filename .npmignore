@@ -4,6 +4,7 @@ coverage/
 
 .editorconfig
 .eslintrc.js
+.mocharc.js
 .gitignore
 .tsbuildinfo
 codealike.json
@@ -12,3 +13,4 @@ tslint.json
 
 *.md
 dist/**/*.spec.*
+test/
