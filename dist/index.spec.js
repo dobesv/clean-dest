@@ -43,7 +43,8 @@ mocha_1.describe(index_1.CleanDestination.name, () => {
                     '!../file2.ts',
                     '!../folder1',
                     '!../folder2',
-                    '!../folder1/file3.ts'
+                    '!../folder1/file3.ts',
+                    '!../folder2/file4.ts'
                 ];
                 assert_1.strict.deepStrictEqual(actual, expected);
             });

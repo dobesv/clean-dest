@@ -54,7 +54,8 @@ describe(CleanDestination.name, () => {
 					'!../file2.ts',
 					'!../folder1',
 					'!../folder2',
-					'!../folder1/file3.ts'
+					'!../folder1/file3.ts',
+					'!../folder2/file4.ts'
 				];
 				assert.deepStrictEqual(actual, expected);
 			});
