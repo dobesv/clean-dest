@@ -39,7 +39,7 @@ class CleanDestination {
         const srcPath = path_1.default.posix.join(srcRootPath, '**', '*');
         this.log('Matching source', srcPath);
         const srcFilePaths = await globby_1.default(srcRootPath, {
-            expandDirectories: true,
+            markDirectories: true,
             onlyFiles: false
         });
         this.log('Matched source files', srcFilePaths);
@@ -47,6 +47,7 @@ class CleanDestination {
         const destFilePaths = [basePattern || defaultBasePattern];
         for (const srcFilePath of srcFilePaths) {
             const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
+            this.log('Mapped src to dest', { srcFilePath, destFilePath });
             if (typeof destFilePath === 'string') {
                 destFilePaths.push('!' + destFilePath);
             }
@@ -65,7 +66,8 @@ class CleanDestination {
     }
     mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap) {
         const destFilePath = this.mapSrcToDestPath(srcFilePath, srcRootPath, destRootPath);
-        if (fileMap === null) {
+        const isDirectory = srcFilePath.endsWith('/');
+        if (isDirectory || fileMap === null) {
             return destFilePath;
         }
         if (typeof fileMap === 'string') {
@@ -74,7 +76,7 @@ class CleanDestination {
             }
             return destFilePath;
         }
-        const extension = path_1.default.parse(destFilePath).ext;
+        const extension = path_1.default.extname(destFilePath);
         if (extension in fileMap) {
             const mapProvider = fileMap[extension];
             return mapProvider(destFilePath);
@@ -84,6 +86,7 @@ class CleanDestination {
     mapSrcToDestPath(srcFilePath, srcRootPath, destRootPath) {
         const fullAppSrcPath = path_1.default.resolve(srcRootPath);
         const relativeSrcPath = path_1.default.relative(fullAppSrcPath, srcFilePath);
+        // Globs only use '/' so we change windows backslash
         return path_1.default.join(destRootPath, relativeSrcPath).replace(/\\/g, '/');
     }
     log(message, ...optionalArgs) {

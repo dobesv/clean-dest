@@ -59,7 +59,7 @@ export class CleanDestination {
 		const srcPath = path.posix.join(srcRootPath, '**', '*');
 		this.log('Matching source', srcPath);
 		const srcFilePaths = await globby(srcRootPath, {
-			expandDirectories: true,
+			markDirectories: true,
 			onlyFiles: false
 		});
 		this.log('Matched source files', srcFilePaths);
@@ -67,6 +67,7 @@ export class CleanDestination {
 		const destFilePaths = [basePattern ||defaultBasePattern];
 		for (const srcFilePath of srcFilePaths) {
 			const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
+			this.log('Mapped src to dest', { srcFilePath, destFilePath });
 			if (typeof destFilePath === 'string') {
 				destFilePaths.push('!' + destFilePath);
 			} else if (destFilePath !== null) {
@@ -86,7 +87,8 @@ export class CleanDestination {
 	private mapDestFile(srcFilePath: string, srcRootPath: string, destRootPath: string, fileMap: FileMap | null): string | ReadonlyArray<string> | null {
 
 		const destFilePath = this.mapSrcToDestPath(srcFilePath, srcRootPath, destRootPath);
-		if (fileMap === null) {
+		const isDirectory = srcFilePath.endsWith('/');
+		if (isDirectory || fileMap === null) {
 			return destFilePath;
 		}
 		if (typeof fileMap === 'string') {
@@ -95,7 +97,8 @@ export class CleanDestination {
 			}
 			return destFilePath;
 		}
-		const extension = path.parse(destFilePath).ext;
+
+		const extension = path.extname(destFilePath);
 		if (extension in fileMap) {
 			const mapProvider = fileMap[extension];
 			return mapProvider(destFilePath);
@@ -107,6 +110,7 @@ export class CleanDestination {
 
 		const fullAppSrcPath = path.resolve(srcRootPath);
 		const relativeSrcPath = path.relative(fullAppSrcPath, srcFilePath);
+		// Globs only use '/' so we change windows backslash
 		return path.join(destRootPath, relativeSrcPath).replace(/\\/g, '/');
 	}
 
