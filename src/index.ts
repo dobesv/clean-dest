@@ -180,7 +180,6 @@ export class CleanDestination {
         ...splitAndTrim(ignore, ';').map((rule) => '!' + rule)
       );
     }
-    ``;
     for (const srcFilePath of srcFilePaths) {
       const destFilePath = this.mapDestFile(
         srcFilePath,

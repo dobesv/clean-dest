@@ -63,8 +63,9 @@ Destination root directory.
 
 ### `base-pattern`
 
-An optional starting pattern to delete, default is "dest-root"/**/*.  All files that match this
-pattern will be deleted unless they are matched to a source file.
+[Glob](https://www.npmjs.com/package/globby) pattern(s) to delete, default is "dest-root"/**/*.  All files that
+match this pattern will be deleted unless they are matched to a source file or ignored using the `ignore`
+option.
 
 ### `file-map`
 

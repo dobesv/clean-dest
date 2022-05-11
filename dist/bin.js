@@ -34,7 +34,7 @@ const argv = yargs_1.default
         type: 'string',
     },
     ignore: {
-        default: '*.tsbuildinfo',
+        default: '**/*.tsbuildinfo',
         describe: 'Glob of output files to keep regardless of input files (seperate multiple rules with semicolon)',
         demand: false,
         type: 'string',

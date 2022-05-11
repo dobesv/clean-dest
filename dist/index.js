@@ -112,7 +112,6 @@ class CleanDestination {
         if (ignore) {
             destFilePaths.push(...splitAndTrim(ignore, ';').map((rule) => '!' + rule));
         }
-        ``;
         for (const srcFilePath of srcFilePaths) {
             const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
             this.log('Mapped src to dest', { srcFilePath, destFilePath });
