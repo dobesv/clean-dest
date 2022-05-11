@@ -1,6 +1,6 @@
 {
   "name": "@dobesv/clean-dest",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "A CLI to clean a destination directory given a source directory",
   "bin": "./dist/bin.js",
   "main": "./dist/index.js",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SeanSobey/clean-dest.git"
+    "url": "git+https://github.com/dobesv/clean-dest.git"
   },
   "keywords": [
     "typescript",

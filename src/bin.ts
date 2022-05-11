@@ -36,24 +36,34 @@ const argv = yargs
       demand: false,
       type: 'string',
     },
+    ignore: {
+      default: '*.tsbuildinfo',
+      describe: 'Glob of output files to keep regardless of input files (seperate multiple rules with semicolon)',
+      demand: false,
+      type: 'string',
+      alias: 'i',
+    },
     permanent: {
       default: false,
       demand: false,
       describe:
         'Optional permanent delete using [del](https://github.com/sindresorhus/del), otherwise uses [trash](https://github.com/sindresorhus/trash).',
       type: 'boolean',
+      alias: 'p',
     },
     'dry-run': {
       default: false,
       demand: false,
       describe: 'Optional test run to not actually delete matched files.',
       type: 'boolean',
+      alias: 'n',
     },
     verbose: {
       default: false,
       demand: false,
       describe: 'Optional output logging.',
       type: 'boolean',
+      alias: 'v',
     },
   })
   .strict()
@@ -65,6 +75,7 @@ async function main(): Promise<void> {
     srcRootPath: argv['src-root'],
     destRootPath: argv['dest-root'],
     basePattern: argv['base-pattern'],
+    ignore: argv['ignore'],
     fileMapArgument: argv['file-map'],
     permanent: argv['permanent'],
     dryRun: argv['dry-run'],

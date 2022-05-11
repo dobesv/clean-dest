@@ -23,6 +23,7 @@ describe(CleanDestination.name, () => {
       destRootPath: './dest',
       basePattern: null,
       fileMapArgument: null,
+      ignore: null,
       permanent: true,
       verbose: true,
       dryRun: true,
@@ -122,7 +123,7 @@ describe(CleanDestination.name, () => {
         assert.deepStrictEqual(actual, expected);
       });
 
-      it('only processes files with a mapping', async () => {
+      it('does not exclude files with no mapping', async () => {
         const tsxFileMap: FileMap = {
           '.tsx': (destFilePath) => [destFilePath.replace(/.tsx$/, '.js')],
         };
@@ -183,7 +184,7 @@ describe(CleanDestination.name, () => {
         assert.deepStrictEqual(actual, expected);
       });
 
-      it('ignores files with no mapping', async () => {
+      it('does not exclude files with no mapping', async () => {
         const srcRootPath = './test/data/**/*';
         const sut = createSUT(
           { fileMapArgument: '.ts:.js', srcRootPath },
@@ -192,6 +193,31 @@ describe(CleanDestination.name, () => {
         const actual = await sut.execute();
         const expected: Array<string> = [
           'dest/**/*',
+          '!../file1.js',
+          '!../file2.js',
+          '!../folder1',
+          '!../folder2',
+          '!../folder1/file3.js',
+          '!../folder2/file4.js',
+        ];
+        assert.deepStrictEqual(actual, expected);
+      });
+
+      it('applies ignore rule if provided', async () => {
+        const srcRootPath = './test/data/**/*';
+        const sut = createSUT(
+          {
+            fileMapArgument: '.ts:.js',
+            srcRootPath,
+            ignore: '*.tsbuildinfo;*.json',
+          },
+          (patterns) => Promise.resolve(patterns)
+        );
+        const actual = await sut.execute();
+        const expected: Array<string> = [
+          'dest/**/*',
+          '!*.tsbuildinfo',
+          '!*.json',
           '!../file1.js',
           '!../file2.js',
           '!../folder1',

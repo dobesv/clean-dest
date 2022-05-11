@@ -58,7 +58,7 @@ const normalizeFileMap = (fileMap, replaceExt = null) => {
     if (Array.isArray(fileMap)) {
         return fileMap
             .map((elt) => normalizeFileMap(elt, replaceExt))
-            .reduce((mapFn1, mapFn2) => (destFilePath) => Array.from(new Set([...mapFn1(destFilePath), ...mapFn2(destFilePath)])));
+            .reduce((mapFn1, mapFn2) => (destFilePath) => Array.from(new Set([...mapFn1(destFilePath), ...mapFn2(destFilePath)])).sort());
     }
     if (fileMap && typeof fileMap === 'object') {
         return normalizeFileMap(Object.entries(fileMap).map(([ext, replacement]) => {
@@ -94,7 +94,7 @@ class CleanDestination {
      */
     async execute() {
         this.log('Executing, using config', this._config);
-        const { srcRootPath, destRootPath, fileMapArgument, basePattern } = this._config;
+        const { srcRootPath, destRootPath, fileMapArgument, basePattern, ignore } = this._config;
         const fileMap = normalizeFileMap(fileMapArgument
             ? /^[.][a-z0-9]/i.test(fileMapArgument)
                 ? (0, exports.parseFileMapString)(fileMapArgument)
@@ -109,6 +109,10 @@ class CleanDestination {
         this.log('Matched source files', srcFilePaths);
         const defaultBasePattern = path_1.default.posix.join(destRootPath, '**', '*');
         const destFilePaths = [basePattern || defaultBasePattern];
+        if (ignore) {
+            destFilePaths.push(...splitAndTrim(ignore, ';').map((rule) => '!' + rule));
+        }
+        ``;
         for (const srcFilePath of srcFilePaths) {
             const destFilePath = this.mapDestFile(srcFilePath, srcRootPath, destRootPath, fileMap);
             this.log('Mapped src to dest', { srcFilePath, destFilePath });

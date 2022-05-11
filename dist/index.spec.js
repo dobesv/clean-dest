@@ -12,6 +12,7 @@ const index_1 = require("./index");
             destRootPath: './dest',
             basePattern: null,
             fileMapArgument: null,
+            ignore: null,
             permanent: true,
             verbose: true,
             dryRun: true,
@@ -88,7 +89,7 @@ const index_1 = require("./index");
                 ];
                 assert_1.strict.deepStrictEqual(actual, expected);
             });
-            (0, mocha_1.it)('only processes files with a mapping', async () => {
+            (0, mocha_1.it)('does not exclude files with no mapping', async () => {
                 const tsxFileMap = {
                     '.tsx': (destFilePath) => [destFilePath.replace(/.tsx$/, '.js')],
                 };
@@ -139,12 +140,33 @@ const index_1 = require("./index");
                 ];
                 assert_1.strict.deepStrictEqual(actual, expected);
             });
-            (0, mocha_1.it)('ignores files with no mapping', async () => {
+            (0, mocha_1.it)('does not exclude files with no mapping', async () => {
                 const srcRootPath = './test/data/**/*';
                 const sut = createSUT({ fileMapArgument: '.ts:.js', srcRootPath }, (patterns) => Promise.resolve(patterns));
                 const actual = await sut.execute();
                 const expected = [
                     'dest/**/*',
+                    '!../file1.js',
+                    '!../file2.js',
+                    '!../folder1',
+                    '!../folder2',
+                    '!../folder1/file3.js',
+                    '!../folder2/file4.js',
+                ];
+                assert_1.strict.deepStrictEqual(actual, expected);
+            });
+            (0, mocha_1.it)('applies ignore rule if provided', async () => {
+                const srcRootPath = './test/data/**/*';
+                const sut = createSUT({
+                    fileMapArgument: '.ts:.js',
+                    srcRootPath,
+                    ignore: '*.tsbuildinfo;*.json',
+                }, (patterns) => Promise.resolve(patterns));
+                const actual = await sut.execute();
+                const expected = [
+                    'dest/**/*',
+                    '!*.tsbuildinfo',
+                    '!*.json',
                     '!../file1.js',
                     '!../file2.js',
                     '!../folder1',

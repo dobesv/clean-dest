@@ -120,6 +120,9 @@ module.exports = exports = {
 };
 ```
 
+### `ignore`
+
+
 ### `permanent`
 
 Optional permanent delete using [del](https://github.com/sindresorhus/del), otherwise uses [trash](https://github.com/sindresorhus/trash).

@@ -9,6 +9,7 @@ export interface CleanDestinationConfig {
   readonly destRootPath: string;
   readonly basePattern: string | null;
   readonly fileMapArgument: string | null;
+  readonly ignore: string | null;
   readonly permanent: boolean;
   readonly verbose: boolean;
   readonly dryRun: boolean;
@@ -104,7 +105,7 @@ const normalizeFileMap = (
           (destFilePath: string): ReadonlyArray<string> =>
             Array.from(
               new Set([...mapFn1(destFilePath), ...mapFn2(destFilePath)])
-            )
+            ).sort()
       );
   }
   if (fileMap && typeof fileMap === 'object') {
@@ -156,7 +157,7 @@ export class CleanDestination {
    */
   public async execute(): Promise<void | ReadonlyArray<string>> {
     this.log('Executing, using config', this._config);
-    const { srcRootPath, destRootPath, fileMapArgument, basePattern } =
+    const { srcRootPath, destRootPath, fileMapArgument, basePattern, ignore } =
       this._config;
     const fileMap: FileMapFunction = normalizeFileMap(
       fileMapArgument
@@ -174,6 +175,12 @@ export class CleanDestination {
     this.log('Matched source files', srcFilePaths);
     const defaultBasePattern = path.posix.join(destRootPath, '**', '*');
     const destFilePaths = [basePattern || defaultBasePattern];
+    if (ignore) {
+      destFilePaths.push(
+        ...splitAndTrim(ignore, ';').map((rule) => '!' + rule)
+      );
+    }
+    ``;
     for (const srcFilePath of srcFilePaths) {
       const destFilePath = this.mapDestFile(
         srcFilePath,
