@@ -101,3 +101,8 @@ typings/
 
 # TernJS port file
 .tern-port
+/.idea/.gitignore
+/.idea/clean-dest.iml
+/.idea/modules.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml

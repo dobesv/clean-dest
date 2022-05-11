@@ -158,7 +158,7 @@ module.exports = {
 				],
 				'@typescript-eslint/indent': [
 					'warn',
-					'tab',
+					2,
 					{
 						'FunctionDeclaration': {
 							'parameters': 'first'

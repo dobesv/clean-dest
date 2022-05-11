@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* Basic Options */
-    "target": "ES2017",
+    "target": "ES2019",
     "module": "commonjs",
     "sourceMap": true,
     "outDir": "./dist",
@@ -17,14 +17,14 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    
+
     /* Additional Checks */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    
+
     /* Module Resolution Options */
     "baseUrl": "./",
     "paths": {

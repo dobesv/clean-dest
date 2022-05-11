@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
 const yargs_1 = tslib_1.__importDefault(require("yargs"));
 const index_1 = require("./index");
+require("source-map-support/register");
 const argv = yargs_1.default
     .options({
     'src-root': {
@@ -27,12 +28,12 @@ const argv = yargs_1.default
         type: 'string',
     },
     'file-map': {
-        default: null,
-        describe: 'Path to a js file whose only export is an extension to clean, or a [ext]: fn object to map source path to destination path(s).',
+        default: '.js,.jsx,.ts,.tsx:.js,.js.map,.d.ts,.d.ts.map',
+        describe: 'Describe rule for calculating output files to keep for a given input file',
         demand: false,
         type: 'string',
     },
-    'permanent': {
+    permanent: {
         default: false,
         demand: false,
         describe: 'Optional permanent delete using [del](https://github.com/sindresorhus/del), otherwise uses [trash](https://github.com/sindresorhus/trash).',
@@ -44,7 +45,7 @@ const argv = yargs_1.default
         describe: 'Optional test run to not actually delete matched files.',
         type: 'boolean',
     },
-    'verbose': {
+    verbose: {
         default: false,
         demand: false,
         describe: 'Optional output logging.',
@@ -52,15 +53,14 @@ const argv = yargs_1.default
     },
 })
     .strict()
-    .config()
-    .argv;
+    .config().argv;
 async function main() {
     /* eslint-disable dot-notation */
     const preprocessor = new index_1.CleanDestination({
         srcRootPath: argv['src-root'],
         destRootPath: argv['dest-root'],
         basePattern: argv['base-pattern'],
-        fileMapPath: argv['file-map'],
+        fileMapArgument: argv['file-map'],
         permanent: argv['permanent'],
         dryRun: argv['dry-run'],
         verbose: argv['verbose'],
@@ -68,6 +68,5 @@ async function main() {
     /* eslint-enable dot-notation */
     await preprocessor.execute();
 }
-main()
-    .catch((error) => console.error(error));
+main().catch((error) => console.error(error));
 //# sourceMappingURL=bin.js.map
