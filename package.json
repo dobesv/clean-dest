@@ -1,8 +1,10 @@
 {
   "name": "@dobesv/clean-dest",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "A CLI to clean a destination directory given a source directory",
-  "bin": "./dist/bin.js",
+  "bin": {
+    "clean-dest": "./dist/bin.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
