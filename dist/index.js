@@ -120,6 +120,7 @@ class CleanDestination {
         this.log('Matching destination files', destFilePaths);
         const deleted = await this._delUtil(destFilePaths, {
             dryRun: this._config.dryRun,
+            force: true,
         });
         if (deleted) {
             this.log('Deleted files', deleted);

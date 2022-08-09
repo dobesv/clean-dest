@@ -32,7 +32,7 @@ export type FileMap =
 export type FileMapImport = (filePath: string) => Promise<FileMap>;
 export type Delete = (
   patterns: ReadonlyArray<string>,
-  options: { readonly dryRun: boolean }
+  options: { readonly dryRun?: boolean; readonly force?: boolean }
 ) => Promise<void | ReadonlyArray<string>>;
 
 // Split a string around a separator, trimming each string's starting and ending whitespace and then
@@ -193,6 +193,7 @@ export class CleanDestination {
     this.log('Matching destination files', destFilePaths);
     const deleted = await this._delUtil(destFilePaths, {
       dryRun: this._config.dryRun,
+      force: true,
     });
     if (deleted) {
       this.log('Deleted files', deleted);
