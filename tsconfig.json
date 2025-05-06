@@ -5,9 +5,11 @@
     "module": "commonjs",
     "sourceMap": true,
     "outDir": "./dist",
+    "declaration": true,
     "importHelpers": true,
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
+    "skipLibCheck": true,
 
     /* Strict Type-Checking Options */
     "strict": true,
